@@ -295,6 +295,15 @@ textarea {
   font-weight: 700;
 }
 
+.global-search-input,
+.global-search-input:focus,
+.global-search-input:focus-visible {
+  border: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
 @media (min-width: 768px) {
   .global-search-trigger { width: clamp(180px, 18vw, 270px); justify-content: flex-start; }
   .global-search-trigger kbd { margin-left: auto; }

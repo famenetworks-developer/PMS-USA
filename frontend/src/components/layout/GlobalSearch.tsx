@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import {
   BedDouble,
@@ -104,6 +105,15 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ onQuickBooking, onQu
   }, [open]);
 
   useEffect(() => {
+    if (!open) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [open]);
+
+  useEffect(() => {
     const search = query.trim();
     if (!open || search.length < 2) return;
     let current = true;
@@ -188,16 +198,16 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ onQuickBooking, onQu
         <kbd className="hidden lg:inline-flex">Ctrl K</kbd>
       </button>
 
-      {open && (
-        <div className="fixed inset-0 z-[70] flex items-start justify-center bg-slate-950/45 px-3 pt-[10vh] backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Search HotelOS" onMouseDown={(event) => { if (event.target === event.currentTarget) close(); }}>
-          <div className="w-full max-w-2xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_30px_100px_rgba(15,23,42,.32)]">
-            <div className="flex items-center gap-3 border-b border-slate-200 px-4">
+      {open && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-slate-950/55 px-3 py-5 backdrop-blur-[3px] sm:pt-[8vh]" role="dialog" aria-modal="true" aria-label="Search HotelOS" onMouseDown={(event) => { if (event.target === event.currentTarget) close(); }}>
+          <div className="w-full max-w-[720px] overflow-hidden rounded-[20px] border border-white/70 bg-white shadow-[0_32px_100px_rgba(2,12,27,.38)] ring-1 ring-slate-950/10">
+            <div className="flex items-center gap-3 border-b border-slate-200 px-4 sm:px-5">
               {loading ? <LoaderCircle className="h-5 w-5 animate-spin text-emerald-600" /> : <Search className="h-5 w-5 text-slate-400" />}
-              <input ref={inputRef} type="search" value={query} onChange={(event) => { setQuery(event.target.value); setActiveIndex(0); }} onKeyDown={handleKeys} placeholder="Search rooms, guests, reservations, pages or actions…" className="h-16 min-w-0 flex-1 border-0 bg-transparent text-base text-slate-950 outline-none placeholder:text-slate-400" aria-label="Search rooms, guests, reservations, pages or actions" aria-controls="global-search-results" aria-activedescendant={results[activeIndex]?.id} />
+              <input ref={inputRef} type="search" value={query} onChange={(event) => { setQuery(event.target.value); setActiveIndex(0); }} onKeyDown={handleKeys} placeholder="Search rooms, guests, reservations, pages or actions…" className="global-search-input h-16 min-w-0 flex-1 border-0 bg-transparent text-base text-slate-950 outline-none placeholder:text-slate-400" aria-label="Search rooms, guests, reservations, pages or actions" aria-controls="global-search-results" aria-activedescendant={results[activeIndex]?.id} />
               <button type="button" onClick={close} className="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="Close search"><X className="h-4 w-4" /></button>
             </div>
 
-            <div id="global-search-results" className="max-h-[min(65vh,560px)] overflow-y-auto p-2" role="listbox">
+            <div id="global-search-results" className="max-h-[min(64vh,560px)] overflow-y-auto p-2 sm:p-2.5" role="listbox">
               {!query && <p className="px-3 pb-2 pt-1 text-[11px] font-bold uppercase tracking-[.14em] text-slate-400">Quick access</p>}
               {results.map((item, index) => {
                 const Icon = item.icon;
@@ -211,9 +221,10 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ onQuickBooking, onQu
               })}
               {!loading && query && results.length === 0 && <div className="px-6 py-12 text-center"><Search className="mx-auto h-8 w-8 text-slate-300" /><p className="mt-3 text-sm font-bold text-slate-700">Nothing found</p><p className="mt-1 text-xs text-slate-500">Try a room number, guest name, reservation number, page or action.</p></div>}
             </div>
-            <div className="flex items-center justify-between border-t border-slate-200 bg-slate-50 px-4 py-2.5 text-[11px] text-slate-500"><span>↑↓ Navigate · Enter Open · Esc Close</span><span>Live records appear after 2 characters</span></div>
+            <div className="flex flex-wrap items-center justify-between gap-1 border-t border-slate-200 bg-slate-50 px-4 py-2.5 text-[11px] text-slate-500 sm:px-5"><span>↑↓ Navigate · Enter Open · Esc Close</span><span className="hidden sm:inline">Live records appear after 2 characters</span></div>
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
     </>
   );
