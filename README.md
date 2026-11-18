@@ -41,7 +41,7 @@ HotelOS adopts the hospitality design language extracted directly from the refer
 
 | Component | Port | Description |
 | :--- | :--- | :--- |
-| **Frontend Web Client** | `5174` (or `5173`) | React/Vite Single Page Application |
+| **Frontend Web Client** | `3000` (or `5174`) | React/Vite Single Page Application |
 | **Backend REST API** | `8095` | Go Gin RESTful API & WebSocket Hub |
 | **PostgreSQL Database** | `5435` | Containerized PostgreSQL 17 Alpine |
 | **Redis Cache** | `6385` | Containerized Redis 7 Alpine |
@@ -164,7 +164,7 @@ go run ./cmd/api
 cd frontend
 npm run dev
 ```
-Open **`http://localhost:5174`** in your browser.
+Open **`http://localhost:3000`** in your browser.
 Log in with `admin` / `admin123`.
 
 # Production safety

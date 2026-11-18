@@ -246,269 +246,7 @@ textarea {
   75% { transform: rotate(12deg); }
 }
 
-/* Dashboard-only glass control centre. */
-.dashboard-glass {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  min-height: calc(100vh - 124px);
-  margin: -0.75rem;
-  padding: clamp(1rem, 2.3vw, 2rem);
-  border: 1px solid rgba(255, 255, 255, 0.38);
-  border-radius: 1.75rem;
-  background:
-    linear-gradient(135deg, rgba(10, 25, 35, 0.32), rgba(20, 38, 48, 0.15)),
-    var(--hotel-background-image) center / cover fixed;
-  box-shadow: 0 24px 70px rgba(12, 30, 38, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.58);
-}
 
-.dashboard-glass::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background: radial-gradient(circle at 14% 4%, rgba(213, 237, 250, 0.34), transparent 31%), linear-gradient(180deg, rgba(239, 246, 249, 0.24), rgba(13, 29, 38, 0.18));
-}
-
-.dashboard-glass > * {
-  position: relative;
-  animation: dashboard-rise 520ms cubic-bezier(.2, .8, .2, 1) both;
-}
-
-.dashboard-glass > :nth-child(2) { animation-delay: 45ms; }
-.dashboard-glass > :nth-child(3) { animation-delay: 90ms; }
-.dashboard-glass > :nth-child(4) { animation-delay: 135ms; }
-.dashboard-glass > :nth-child(5) { animation-delay: 180ms; }
-.dashboard-glass > :nth-child(6) { animation-delay: 225ms; }
-
-.dashboard-glass > :first-child,
-.dashboard-glass [class~="bg-hotel-panel"] {
-  border-color: rgba(255, 255, 255, 0.55) !important;
-  background: linear-gradient(145deg, rgba(248, 251, 252, 0.89), rgba(226, 235, 239, 0.78)) !important;
-  box-shadow: 0 14px 35px rgba(5, 23, 32, 0.13), inset 0 1px 0 rgba(255, 255, 255, 0.86), inset 0 -1px 0 rgba(255, 255, 255, 0.24) !important;
-  backdrop-filter: blur(18px) saturate(135%);
-  -webkit-backdrop-filter: blur(18px) saturate(135%);
-}
-
-.dashboard-glass > :first-child {
-  padding: 1.15rem 1.25rem;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 1.25rem;
-}
-
-.dashboard-glass [class~="bg-hotel-panel"] {
-  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
-}
-
-.dashboard-glass [class~="bg-hotel-panel"]:hover {
-  transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, 0.82) !important;
-  box-shadow: 0 20px 45px rgba(5, 23, 32, 0.17), inset 0 1px 0 rgba(255, 255, 255, 0.94) !important;
-}
-
-.dashboard-glass table tbody tr { transition: background-color 160ms ease; }
-.dashboard-glass table tbody tr:hover { background: rgba(255, 255, 255, 0.38) !important; }
-
-@keyframes dashboard-rise {
-  from { opacity: 0; transform: translateY(10px) scale(.995); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-@media (max-width: 1023px) {
-  .dashboard-glass { margin: -0.25rem; border-radius: 1.25rem; background-attachment: scroll; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .dashboard-glass > * { animation: none !important; }
-  .dashboard-glass [class~="bg-hotel-panel"]:hover { transform: none; }
-}
-
-/* Shared premium glass shell: applies to every authenticated module and role. */
-.premium-glass-shell {
-  position: relative;
-  isolation: isolate;
-  background:
-    linear-gradient(135deg, rgba(8, 23, 31, 0.26), rgba(228, 236, 239, 0.18)),
-    var(--hotel-background-image) center / cover fixed;
-}
-
-.premium-glass-shell::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background: linear-gradient(115deg, rgba(8, 28, 35, 0.22), rgba(238, 243, 243, 0.34) 42%, rgba(222, 231, 233, 0.2));
-}
-
-.glass-sidebar {
-  background: linear-gradient(160deg, rgba(16, 67, 57, 0.92) 0%, rgba(8, 46, 42, 0.88) 48%, rgba(7, 30, 34, 0.91) 100%);
-  backdrop-filter: blur(30px) saturate(140%);
-  -webkit-backdrop-filter: blur(30px) saturate(140%);
-  box-shadow: 20px 18px 64px rgba(2, 17, 22, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.2), inset -1px 0 0 rgba(255, 255, 255, 0.09);
-}
-
-.glass-sidebar::after {
-  content: '';
-  position: absolute;
-  inset: 1px;
-  z-index: 0;
-  pointer-events: none;
-  border-radius: 27px;
-  background: linear-gradient(120deg, rgba(255, 255, 255, 0.06), transparent 32%, transparent 68%, rgba(208, 166, 78, 0.035));
-}
-
-.glass-sidebar nav a,
-.glass-sidebar button,
-.glass-sidebar > div {
-  will-change: transform;
-}
-
-.glass-sidebar nav a:hover { transform: translateX(2px); }
-.glass-sidebar nav a[aria-current="page"]:hover { transform: none; }
-
-.glass-sidebar .sidebar-nav {
-  scrollbar-width: none;
-  overscroll-behavior: contain;
-}
-
-.glass-sidebar .sidebar-nav::-webkit-scrollbar {
-  display: none;
-}
-
-.glass-sidebar .sidebar-tooltip {
-  transform: translateX(-5px);
-}
-
-.glass-sidebar nav a::before {
-  content: '';
-  position: absolute;
-  left: 0.2rem;
-  width: 2px;
-  height: 0;
-  border-radius: 999px;
-  background: #e9bc5d;
-  box-shadow: 0 0 14px rgba(233, 188, 93, 0.68);
-  transition: height 180ms ease;
-}
-
-.glass-sidebar nav a[aria-current="page"]::before {
-  height: 48%;
-}
-
-.glass-topbar {
-  background: linear-gradient(105deg, rgba(249, 252, 250, 0.93), rgba(225, 235, 234, 0.84));
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92), 0 12px 38px rgba(5, 30, 34, 0.12);
-  backdrop-filter: blur(26px) saturate(150%);
-  -webkit-backdrop-filter: blur(26px) saturate(150%);
-}
-
-.page-header-glass {
-  position: relative;
-  overflow: hidden;
-  padding: 1.25rem 1.35rem;
-  border: 1px solid rgba(255, 255, 255, 0.78);
-  border-radius: 1.25rem;
-  background: linear-gradient(135deg, rgba(255, 255, 252, 0.92), rgba(229, 238, 236, 0.87));
-  box-shadow: 0 16px 42px rgba(5, 29, 33, 0.13), inset 0 1px 0 rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(24px) saturate(135%);
-  -webkit-backdrop-filter: blur(24px) saturate(135%);
-}
-
-.page-header-glass::after {
-  content: '';
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 4px;
-  background: linear-gradient(180deg, #d8a33b, #0d6652);
-}
-
-.page-header-glass h1 { color: #0b3029 !important; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7); }
-.page-header-glass p { color: #526c65 !important; }
-.page-header-glass .kicker { color: #9a6818 !important; }
-
-@media (max-width: 639px) {
-  .page-header-glass { padding: 1rem; border-radius: 1rem; }
-}
-
-.glass-workspace {
-  min-height: calc(100vh - 68px);
-}
-
-.glass-workspace > *:not(.dashboard-glass) {
-  animation: workspace-enter 480ms cubic-bezier(.2, .8, .2, 1) both;
-}
-
-.glass-workspace > *:not(.dashboard-glass) [class~="bg-hotel-panel"],
-.glass-workspace > *:not(.dashboard-glass) [class~="bg-hotel-panel2"],
-.glass-workspace > *:not(.dashboard-glass) [role="dialog"] {
-  border-color: rgba(255, 255, 255, 0.62) !important;
-  background: linear-gradient(145deg, rgba(255, 255, 253, 0.92), rgba(231, 239, 240, 0.84)) !important;
-  box-shadow: 0 16px 42px rgba(6, 25, 32, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.92) !important;
-  backdrop-filter: blur(22px) saturate(135%);
-  -webkit-backdrop-filter: blur(22px) saturate(135%);
-}
-
-.glass-workspace > *:not(.dashboard-glass) [class~="bg-hotel-panel"] {
-  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
-}
-
-.glass-workspace > *:not(.dashboard-glass) [class~="bg-hotel-panel"]:hover {
-  border-color: rgba(255, 255, 255, 0.86) !important;
-  box-shadow: 0 20px 48px rgba(6, 25, 32, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.96) !important;
-}
-
-.glass-workspace input,
-.glass-workspace select,
-.glass-workspace textarea,
-.glass-topbar input {
-  border-color: rgba(93, 116, 116, 0.28) !important;
-  background-color: rgba(255, 255, 255, 0.7) !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
-  backdrop-filter: blur(12px);
-}
-
-.glass-workspace table thead {
-  background: rgba(240, 245, 244, 0.64);
-}
-
-.glass-workspace table tbody tr {
-  transition: background-color 160ms ease;
-}
-
-.glass-workspace table tbody tr:hover {
-  background: rgba(255, 255, 255, 0.5) !important;
-}
-
-.glass-topbar [class~="bg-white"],
-.glass-topbar [class*="bg-[#fffefb]"] {
-  background-color: rgba(255, 255, 255, 0.82) !important;
-  backdrop-filter: blur(18px);
-}
-
-@keyframes workspace-enter {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@media (max-width: 1023px) {
-  .premium-glass-shell { background-attachment: scroll; }
-  .glass-sidebar {
-    bottom: 0.5rem;
-    left: 0.5rem;
-    top: 0.5rem;
-    width: min(17.25rem, calc(100vw - 1rem));
-    border-radius: 24px;
-    box-shadow: 22px 0 70px rgba(2, 17, 22, 0.34);
-  }
-  .glass-sidebar .sidebar-tooltip { display: none; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .glass-workspace > * { animation: none !important; }
-  .glass-sidebar nav a:hover { transform: none; }
-}
 
 /* Night workspace — shared across every authenticated route. */
 html.night {
@@ -653,4 +391,269 @@ html.night .theme-switch { box-shadow: none !important; }
   html.night .glass-topbar { top: 0; }
   html.night .window-controls { display: none; }
   html.night .glass-sidebar { inset-block: .5rem; left: .5rem; }
+}
+
+/* Classic executive interface — presentation only; content and behavior stay intact. */
+:root {
+  --admin-bg: #f3f1ec;
+  --admin-panel: #fffdfa;
+  --admin-panel2: #f8f6f1;
+  --admin-line: #d9d4c9;
+  --admin-text: #172b3a;
+  --admin-muted: #687681;
+  --admin-accent: #a9782d;
+  --admin-gold: #b88a3d;
+  --color-hotel-bg: #f3f1ec;
+  --color-hotel-panel: #fffdfa;
+  --color-hotel-panel2: #f8f6f1;
+  --color-hotel-surface: #eeebe4;
+  --color-hotel-line: #d9d4c9;
+  --color-hotel-text: #172b3a;
+  --color-hotel-muted: #687681;
+  --color-hotel-accent: #a9782d;
+  --color-hotel-gold: #b88a3d;
+}
+
+body {
+  background: #e9e6df;
+  color: #172b3a;
+}
+
+.premium-glass-shell,
+html.night .premium-glass-shell {
+  min-height: 100vh;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: #f3f1ec;
+  box-shadow: none;
+}
+
+.premium-glass-shell::before,
+html.night .premium-glass-shell::before,
+.window-controls,
+html.night .window-controls { display: none; }
+
+.glass-sidebar,
+html.night .glass-sidebar {
+  inset-block: 0;
+  left: 0;
+  border: 0;
+  border-right: 1px solid rgba(255,255,255,.1);
+  border-radius: 0;
+  background: #102b3a;
+  box-shadow: 8px 0 28px rgba(18,35,45,.12);
+  backdrop-filter: none;
+}
+
+.glass-sidebar::after,
+html.night .glass-sidebar::after { display: none; }
+
+.glass-sidebar nav a,
+html.night .glass-sidebar nav a { border-radius: 7px !important; }
+
+.glass-sidebar nav a[aria-current="page"],
+html.night .glass-sidebar nav a[aria-current="page"] {
+  background: #f6f3ec !important;
+  color: #17394a !important;
+  box-shadow: inset 3px 0 #b98a3b;
+}
+
+.glass-sidebar nav a::before,
+html.night .glass-sidebar nav a::before { display: none; }
+
+.glass-topbar,
+html.night .glass-topbar {
+  top: 0;
+  height: 68px;
+  border-color: #d9d4c9 !important;
+  background: rgba(255,253,250,.97);
+  box-shadow: 0 2px 12px rgba(23,43,58,.07);
+  backdrop-filter: blur(12px);
+}
+
+.glass-topbar [class~="bg-white"],
+.glass-topbar [class*="bg-[#fffefb]"],
+html.night .glass-topbar [class~="bg-white"],
+html.night .glass-topbar [class*="bg-[#fffefb]"],
+html.night .glass-topbar [class*="rgba(255,255,255"] { background: #fffdfa !important; }
+
+.glass-topbar [class*="text-[#14"],
+.glass-topbar [class*="text-[#17"],
+.glass-topbar [class*="text-[#31"],
+html.night .glass-topbar [class*="text-[#14"],
+html.night .glass-topbar [class*="text-[#17"],
+html.night .glass-topbar [class*="text-[#31"] { color: #17394a !important; }
+
+.glass-workspace,
+html.night .glass-workspace {
+  min-height: calc(100vh - 68px);
+  background: #f3f1ec;
+}
+
+.dashboard-glass,
+html.night .dashboard-glass {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.dashboard-glass::before,
+html.night .dashboard-glass::before { display: none; }
+
+.dashboard-glass > :first-child,
+.dashboard-glass [class~="bg-hotel-panel"],
+.glass-workspace > *:not(.dashboard-glass) [class~="bg-hotel-panel"],
+.glass-workspace > *:not(.dashboard-glass) [class~="bg-hotel-panel2"],
+.glass-workspace > *:not(.dashboard-glass) [role="dialog"],
+html.night .dashboard-glass > :first-child,
+html.night .dashboard-glass [class~="bg-hotel-panel"],
+html.night .glass-workspace > *:not(.dashboard-glass) [class~="bg-hotel-panel"],
+html.night .glass-workspace > *:not(.dashboard-glass) [class~="bg-hotel-panel2"],
+html.night .glass-workspace > *:not(.dashboard-glass) [role="dialog"] {
+  border-color: #d9d4c9 !important;
+  background: #fffdfa !important;
+  box-shadow: 0 3px 14px rgba(23,43,58,.055) !important;
+  backdrop-filter: none;
+}
+
+.dashboard-glass [class~="bg-hotel-panel"]:hover,
+.glass-workspace > *:not(.dashboard-glass) [class~="bg-hotel-panel"]:hover,
+html.night .dashboard-glass [class~="bg-hotel-panel"]:hover,
+html.night .glass-workspace > *:not(.dashboard-glass) [class~="bg-hotel-panel"]:hover {
+  transform: none;
+  border-color: #c9c1b4 !important;
+  box-shadow: 0 5px 18px rgba(23,43,58,.08) !important;
+}
+
+.page-header-glass,
+html.night .page-header-glass {
+  padding: 1.35rem 1.5rem;
+  border-color: #d9d4c9;
+  border-radius: 10px;
+  background: #fffdfa;
+  box-shadow: 0 3px 14px rgba(23,43,58,.055);
+  backdrop-filter: none;
+}
+
+.page-header-glass::after,
+html.night .page-header-glass::after {
+  width: 3px;
+  background: #b88a3d;
+}
+
+.page-header-glass h1,
+html.night .page-header-glass h1 { color: #172b3a !important; text-shadow: none; }
+.page-header-glass p,
+html.night .page-header-glass p { color: #687681 !important; }
+.page-header-glass .kicker,
+.kicker,
+html.night .page-header-glass .kicker,
+html.night .kicker { color: #9b6d27 !important; }
+
+.admin-shell input,
+.admin-shell textarea,
+.admin-shell select,
+.glass-workspace input,
+.glass-workspace select,
+.glass-workspace textarea,
+.glass-topbar input,
+html.night .admin-shell input,
+html.night .admin-shell textarea,
+html.night .admin-shell select,
+html.night .glass-workspace input,
+html.night .glass-workspace select,
+html.night .glass-workspace textarea,
+html.night .glass-topbar input {
+  color-scheme: light;
+  border-color: #d5d0c6 !important;
+  border-radius: 7px !important;
+  background: #fbfaf7 !important;
+  color: #172b3a !important;
+  box-shadow: inset 0 1px 2px rgba(23,43,58,.035);
+  backdrop-filter: none;
+}
+
+.admin-shell input::placeholder,
+.admin-shell textarea::placeholder,
+html.night .admin-shell input::placeholder,
+html.night .admin-shell textarea::placeholder { color: #8b949a; }
+
+.glass-workspace table thead,
+html.night .glass-workspace table thead { background: #f4f1eb; }
+.glass-workspace table tbody tr:hover,
+.admin-shell tr:hover,
+html.night .glass-workspace table tbody tr:hover,
+html.night .admin-shell tr:hover { background: #f8f5ef !important; }
+
+html.night {
+  --admin-bg: #111b24;
+  --admin-panel: #182630;
+  --admin-panel2: #15212a;
+  --admin-line: #34434d;
+  --admin-text: #f2efe8;
+  --admin-muted: #a9b2b8;
+  --admin-accent: #c49343;
+  --admin-gold: #d0a55b;
+  --color-hotel-bg: #111b24;
+  --color-hotel-panel: #182630;
+  --color-hotel-panel2: #15212a;
+  --color-hotel-surface: #101a22;
+  --color-hotel-line: #34434d;
+  --color-hotel-text: #f2efe8;
+  --color-hotel-muted: #a9b2b8;
+  --color-hotel-accent: #c49343;
+  --color-hotel-gold: #d0a55b;
+}
+
+html.night body { background: #0d151c; color: #f2efe8; }
+html.night .premium-glass-shell { background: #111b24; }
+html.night .glass-topbar { border-color: #34434d !important; background: rgba(17,27,36,.98); }
+html.night .glass-topbar [class~="bg-white"],
+html.night .glass-topbar [class*="bg-[#fffefb]"],
+html.night .glass-topbar [class*="rgba(255,255,255"] { background: #182630 !important; }
+html.night .glass-topbar [class*="text-[#14"],
+html.night .glass-topbar [class*="text-[#17"],
+html.night .glass-topbar [class*="text-[#31"] { color: #f2efe8 !important; }
+html.night .glass-workspace { background: #111b24; }
+html.night .dashboard-glass > :first-child,
+html.night .dashboard-glass [class~="bg-hotel-panel"],
+html.night .glass-workspace > *:not(.dashboard-glass) [class~="bg-hotel-panel"],
+html.night .glass-workspace > *:not(.dashboard-glass) [class~="bg-hotel-panel2"],
+html.night .glass-workspace > *:not(.dashboard-glass) [role="dialog"] {
+  border-color: #34434d !important;
+  background: #182630 !important;
+  box-shadow: 0 3px 14px rgba(0,0,0,.14) !important;
+}
+html.night .page-header-glass { border-color: #34434d; background: #182630; box-shadow: 0 3px 14px rgba(0,0,0,.14); }
+html.night .page-header-glass h1 { color: #f2efe8 !important; }
+html.night .page-header-glass p { color: #a9b2b8 !important; }
+html.night .page-header-glass .kicker,
+html.night .kicker { color: #d0a55b !important; }
+html.night .admin-shell input,
+html.night .admin-shell textarea,
+html.night .admin-shell select,
+html.night .glass-workspace input,
+html.night .glass-workspace select,
+html.night .glass-workspace textarea,
+html.night .glass-topbar input {
+  color-scheme: dark;
+  border-color: #3b4a54 !important;
+  background: #101a22 !important;
+  color: #f2efe8 !important;
+}
+html.night .glass-workspace table thead { background: #15212a; }
+html.night .glass-workspace table tbody tr:hover,
+html.night .admin-shell tr:hover { background: #1d2d38 !important; }
+
+@media (max-width: 1023px) {
+  .glass-sidebar,
+  html.night .glass-sidebar {
+    inset-block: .5rem;
+    left: .5rem;
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 10px;
+  }
 }
