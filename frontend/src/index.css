@@ -223,6 +223,47 @@ textarea {
   }
 }
 
+/* Reception dashboard: high-contrast, shift-first operational controls. */
+.reception-mini-card {
+  display: flex;
+  min-height: 78px;
+  align-items: center;
+  gap: .75rem;
+  border: 1px solid #dbe1e6;
+  border-radius: .75rem;
+  background: #fff;
+  padding: .9rem 1rem;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, .04);
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+
+.reception-mini-card:hover {
+  transform: translateY(-1px);
+  border-color: #bac5ce;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, .08);
+}
+
+.reception-mini-card strong {
+  display: block;
+  color: #0f172a;
+  font-size: 1.25rem;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.reception-mini-card span {
+  display: block;
+  margin-top: .2rem;
+  color: #64748b;
+  font-size: .72rem;
+  font-weight: 600;
+}
+
+@media (max-width: 639px) {
+  .reception-dashboard { margin: -.25rem; }
+  .reception-mini-card { min-height: 70px; padding: .75rem; }
+}
+
 @media (max-width: 640px) {
   .admin-shell table {
     min-width: 720px;

@@ -9,25 +9,127 @@ import {
   DollarSign,
   TrendingUp,
   Percent,
-  Clock,
   ArrowRight,
-  ArrowUpRight,
   LogOut,
   Calendar,
+  ClipboardCheck,
+  UserPlus,
+  Search,
+  AlertTriangle,
+  Building2,
 } from 'lucide-react';
-import { dashboardApi } from '../../api/endpoints';
+import { dashboardApi, roomsApi } from '../../api/endpoints';
 import { PageHeader } from '../../components/common/PageHeader';
 import { StatCard } from '../../components/common/StatCard';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
+import type { DashboardData, Room } from '../../types';
 const DashboardCharts = lazy(() => import('./DashboardCharts').then((module) => ({ default: module.DashboardCharts })));
 
+const receptionRoomStyles: Record<string, { label: string; card: string; dot: string }> = {
+  available: { label: 'Available', card: 'border-emerald-300 bg-emerald-50 text-emerald-950', dot: 'bg-emerald-500' },
+  reserved: { label: 'Reserved', card: 'border-amber-300 bg-amber-50 text-amber-950', dot: 'bg-amber-500' },
+  occupied: { label: 'Occupied', card: 'border-red-300 bg-red-50 text-red-950', dot: 'bg-red-500' },
+  dirty: { label: 'Dirty', card: 'border-slate-300 bg-slate-100 text-slate-800', dot: 'bg-slate-500' },
+  cleaning: { label: 'Cleaning', card: 'border-sky-300 bg-sky-50 text-sky-950', dot: 'bg-sky-500' },
+  inspected: { label: 'Inspected', card: 'border-teal-300 bg-teal-50 text-teal-950', dot: 'bg-teal-500' },
+  maintenance: { label: 'Maintenance', card: 'border-orange-300 bg-orange-50 text-orange-950', dot: 'bg-orange-500' },
+  out_of_order: { label: 'Out of order', card: 'border-zinc-400 bg-zinc-100 text-zinc-900', dot: 'bg-zinc-600' },
+};
+
+const ReceptionDashboard: React.FC<{ data: DashboardData; rooms: Room[] }> = ({ data, rooms }) => {
+  const { stats, upcoming_arrivals, upcoming_departures } = data;
+  const [roomFilter, setRoomFilter] = useState<'all' | 'available' | 'reserved' | 'occupied'>('all');
+  const [roomSearch, setRoomSearch] = useState('');
+  const visibleRooms = rooms
+    .filter((room) => roomFilter === 'all' || room.status === roomFilter)
+    .filter((room) => `${room.room_number} ${room.room_type?.name ?? ''} ${room.floor?.name ?? ''}`.toLowerCase().includes(roomSearch.toLowerCase()))
+    .sort((a, b) => a.room_number.localeCompare(b.room_number, undefined, { numeric: true }));
+  const operationalIssues = stats.dirty_rooms + stats.cleaning_rooms + stats.maintenance_rooms;
+
+  const statusCards = [
+    { key: 'available' as const, label: 'Available rooms', value: stats.available_rooms, helper: 'Clean and ready to sell', icon: DoorOpen, style: 'border-emerald-300 bg-emerald-50 text-emerald-950', iconStyle: 'bg-emerald-600 text-white' },
+    { key: 'reserved' as const, label: 'Booked / reserved', value: stats.reserved_rooms, helper: `${stats.today_check_ins} arrival${stats.today_check_ins === 1 ? '' : 's'} today`, icon: CalendarCheck, style: 'border-amber-300 bg-amber-50 text-amber-950', iconStyle: 'bg-amber-500 text-white' },
+    { key: 'occupied' as const, label: 'Staying now', value: stats.occupied_rooms, helper: `${stats.current_guests} in-house guest${stats.current_guests === 1 ? '' : 's'}`, icon: BedDouble, style: 'border-red-300 bg-red-50 text-red-950', iconStyle: 'bg-red-600 text-white' },
+  ];
+
+  return (
+    <div className="reception-dashboard space-y-5">
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="flex flex-col gap-4 border-b border-slate-200 px-5 py-5 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <div className="mb-1 flex items-center gap-2 text-xs font-bold uppercase tracking-[.16em] text-emerald-700"><span className="h-2 w-2 rounded-full bg-emerald-500" />Live front desk</div>
+            <h1 className="text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Reception overview</h1>
+            <p className="mt-1 text-sm text-slate-500">Rooms, guests, arrivals and urgent work — everything needed for this shift.</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Link to="/reservations" className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50"><CalendarCheck className="h-4 w-4" />New reservation</Link>
+            <Link to="/frontdesk" className="inline-flex items-center gap-2 rounded-lg bg-[#12384a] px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#0c2d3d]"><UserPlus className="h-4 w-4" />Check in guest</Link>
+          </div>
+        </div>
+
+        <div className="grid gap-3 p-4 md:grid-cols-3">
+          {statusCards.map(({ key, label, value, helper, icon: Icon, style, iconStyle }) => (
+            <button key={key} onClick={() => setRoomFilter(roomFilter === key ? 'all' : key)} className={`flex min-h-32 items-center justify-between rounded-xl border-2 p-5 text-left transition hover:-translate-y-0.5 hover:shadow-md ${style} ${roomFilter === key ? 'ring-2 ring-slate-900/20 ring-offset-2' : ''}`}>
+              <div><p className="text-sm font-bold uppercase tracking-wide opacity-75">{label}</p><p className="mt-1 text-4xl font-black tabular-nums">{value}</p><p className="mt-1 text-xs font-medium opacity-70">{helper}</p></div>
+              <span className={`grid h-12 w-12 place-items-center rounded-xl shadow-sm ${iconStyle}`}><Icon className="h-6 w-6" /></span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <Link to="/frontdesk" className="reception-mini-card"><LogOut className="h-5 w-5 text-indigo-600" /><div><strong>{stats.today_check_outs}</strong><span>Departures today</span></div></Link>
+        <Link to="/housekeeping" className="reception-mini-card"><Sparkles className="h-5 w-5 text-sky-600" /><div><strong>{stats.dirty_rooms + stats.cleaning_rooms}</strong><span>Need housekeeping</span></div></Link>
+        <Link to="/maintenance" className="reception-mini-card"><Wrench className="h-5 w-5 text-orange-600" /><div><strong>{stats.maintenance_rooms}</strong><span>Maintenance blocks</span></div></Link>
+        <Link to="/frontdesk" className="reception-mini-card"><AlertTriangle className={`h-5 w-5 ${operationalIssues ? 'text-red-600' : 'text-emerald-600'}`} /><div><strong>{operationalIssues}</strong><span>Rooms not sellable</span></div></Link>
+      </div>
+
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,1.6fr)_minmax(330px,.8fr)]">
+        <section className="rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div className="flex flex-col gap-3 border-b border-slate-200 p-4 sm:flex-row sm:items-center sm:justify-between">
+            <div><h2 className="flex items-center gap-2 text-base font-bold text-slate-900"><Building2 className="h-5 w-5 text-slate-500" />Live room board</h2><p className="text-xs text-slate-500">Select a colour above to filter the board.</p></div>
+            <label className="relative block"><Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" /><input value={roomSearch} onChange={(event) => setRoomSearch(event.target.value)} placeholder="Find room..." className="w-full rounded-lg border border-slate-300 bg-white py-2 pl-9 pr-3 text-sm text-slate-900 sm:w-48" /></label>
+          </div>
+          <div className="flex flex-wrap items-center gap-4 border-b border-slate-100 px-4 py-3 text-xs font-semibold text-slate-600">
+            {['available', 'reserved', 'occupied', 'dirty', 'cleaning', 'maintenance'].map((status) => <span key={status} className="flex items-center gap-1.5"><i className={`h-2.5 w-2.5 rounded-full ${receptionRoomStyles[status].dot}`} />{receptionRoomStyles[status].label}</span>)}
+          </div>
+          <div className="grid max-h-[440px] grid-cols-2 gap-2 overflow-y-auto p-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+            {visibleRooms.map((room) => { const roomStyle = receptionRoomStyles[room.status] ?? receptionRoomStyles.out_of_order; return <Link to="/rooms" key={room.id} className={`min-h-24 rounded-xl border-2 p-3 transition hover:-translate-y-0.5 hover:shadow-md ${roomStyle.card}`}><div className="flex items-start justify-between gap-2"><strong className="text-xl leading-none">{room.room_number}</strong><i className={`mt-1 h-2.5 w-2.5 shrink-0 rounded-full ${roomStyle.dot}`} /></div><p className="mt-2 truncate text-[11px] font-semibold opacity-70">{room.room_type?.name ?? 'Guest room'}</p><p className="mt-1 text-xs font-bold">{roomStyle.label}</p></Link>; })}
+            {visibleRooms.length === 0 && <div className="col-span-full py-12 text-center text-sm text-slate-500">No rooms match this filter.</div>}
+          </div>
+        </section>
+
+        <div className="space-y-5">
+          <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="mb-3 flex items-center justify-between"><div><h2 className="font-bold text-slate-900">Today's arrivals</h2><p className="text-xs text-slate-500">Guests waiting to check in</p></div><span className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-bold text-amber-800">{upcoming_arrivals.length}</span></div>
+            <div className="space-y-2">{upcoming_arrivals.slice(0, 4).map((arrival) => <Link to="/frontdesk" key={arrival.id} className="flex items-center justify-between rounded-xl border border-slate-200 p-3 hover:bg-slate-50"><div className="min-w-0"><p className="truncate text-sm font-bold text-slate-900">{arrival.guest?.first_name} {arrival.guest?.last_name}</p><p className="truncate text-xs text-slate-500">{arrival.room?.room_number ? `Room ${arrival.room.room_number}` : arrival.room_type?.name ?? 'Room unassigned'}</p></div><ArrowRight className="h-4 w-4 shrink-0 text-slate-400" /></Link>)}{upcoming_arrivals.length === 0 && <p className="rounded-xl bg-slate-50 py-6 text-center text-xs text-slate-500">No arrivals waiting.</p>}</div>
+          </section>
+          <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="mb-3 flex items-center justify-between"><div><h2 className="font-bold text-slate-900">Today's departures</h2><p className="text-xs text-slate-500">Check folio before checkout</p></div><span className="rounded-full bg-indigo-100 px-2.5 py-1 text-xs font-bold text-indigo-800">{upcoming_departures.length}</span></div>
+            <div className="space-y-2">{upcoming_departures.slice(0, 4).map((departure) => <Link to="/frontdesk" key={departure.id} className="flex items-center justify-between rounded-xl border border-slate-200 p-3 hover:bg-slate-50"><div className="min-w-0"><p className="truncate text-sm font-bold text-slate-900">{departure.guest?.first_name} {departure.guest?.last_name}</p><p className="truncate text-xs text-slate-500">Room {departure.room?.room_number ?? '—'} · Balance {(departure.total_amount - departure.paid_amount).toLocaleString()} BDT</p></div><ClipboardCheck className="h-4 w-4 shrink-0 text-indigo-500" /></Link>)}{upcoming_departures.length === 0 && <p className="rounded-xl bg-slate-50 py-6 text-center text-xs text-slate-500">No departures scheduled.</p>}</div>
+          </section>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export const DashboardPage: React.FC = () => {
+  const { user } = useAuth();
   const [dateFilter, setDateFilter] = useState<'today' | '7days' | 'month'>('today');
 
   const { data, isLoading } = useQuery({
     queryKey: ['dashboard', dateFilter],
     queryFn: dashboardApi.getStats,
+    refetchInterval: 15000,
+  });
+
+  const { data: rooms = [] } = useQuery({
+    queryKey: ['rooms', 'reception-dashboard'],
+    queryFn: () => roomsApi.getRooms(),
+    enabled: user?.role === 'receptionist',
     refetchInterval: 15000,
   });
 
@@ -43,6 +145,10 @@ export const DashboardPage: React.FC = () => {
   }
 
   const { stats, revenue_trend, source_breakdown, recent_reservations, upcoming_arrivals, upcoming_departures } = data;
+
+  if (user?.role === 'receptionist') {
+    return <ReceptionDashboard data={data} rooms={rooms} />;
+  }
 
   return (
     <div className="dashboard-glass space-y-6">
