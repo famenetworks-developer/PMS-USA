@@ -259,6 +259,47 @@ textarea {
   font-weight: 600;
 }
 
+/* Global command search — visible to every authenticated role. */
+.global-search-trigger {
+  display: flex;
+  height: 38px;
+  min-width: 38px;
+  align-items: center;
+  gap: .55rem;
+  border: 1px solid #d6ddd9;
+  border-radius: .55rem;
+  background: rgba(255, 255, 255, .92);
+  padding: 0 .7rem;
+  color: #51645f;
+  font-size: .75rem;
+  font-weight: 600;
+  box-shadow: 0 3px 12px rgba(20, 52, 46, .06);
+  transition: border-color 160ms ease, box-shadow 160ms ease, color 160ms ease;
+}
+
+.global-search-trigger:hover {
+  border-color: #9eb3aa;
+  color: #153f36;
+  box-shadow: 0 5px 16px rgba(20, 52, 46, .1);
+}
+
+.global-search-trigger kbd {
+  align-items: center;
+  border: 1px solid #d7dfdb;
+  border-radius: .35rem;
+  background: #f4f7f5;
+  padding: .15rem .35rem;
+  color: #71827c;
+  font-family: inherit;
+  font-size: .6rem;
+  font-weight: 700;
+}
+
+@media (min-width: 768px) {
+  .global-search-trigger { width: clamp(180px, 18vw, 270px); justify-content: flex-start; }
+  .global-search-trigger kbd { margin-left: auto; }
+}
+
 @media (max-width: 639px) {
   .reception-dashboard { margin: -.25rem; }
   .reception-mini-card { min-height: 70px; padding: .75rem; }

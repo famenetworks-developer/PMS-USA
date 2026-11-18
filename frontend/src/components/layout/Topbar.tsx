@@ -16,6 +16,7 @@ import {
 import { useSocket } from '../../contexts/SocketContext';
 import { settingsApi } from '../../api/endpoints';
 import { NotificationItem } from '../../types';
+import { GlobalSearch } from './GlobalSearch';
 
 interface TopbarProps {
   onOpenMenu?: () => void;
@@ -178,7 +179,7 @@ export const Topbar: React.FC<TopbarProps> = ({
       {/* Regional clocks */}
       <div className="flex min-w-0 flex-1 items-center gap-3">
         <button onClick={onOpenMenu} className="rounded-lg border border-hotel-line bg-white p-2 text-[#174b40] lg:hidden" aria-label="Open menu"><Menu className="h-5 w-5" /></button>
-        <div className="flex h-11 items-center gap-1.5 rounded-2xl border border-white/80 bg-[linear-gradient(135deg,rgba(255,255,255,.82),rgba(230,239,237,.65))] p-1.5 shadow-[0_10px_30px_rgba(13,54,47,.11),inset_0_1px_0_rgba(255,255,255,.95)] backdrop-blur-2xl">
+        <div className="hidden h-11 items-center gap-1.5 rounded-2xl border border-white/80 bg-[linear-gradient(135deg,rgba(255,255,255,.82),rgba(230,239,237,.65))] p-1.5 shadow-[0_10px_30px_rgba(13,54,47,.11),inset_0_1px_0_rgba(255,255,255,.95)] backdrop-blur-2xl sm:flex">
           <div className="flex min-w-[7rem] items-center gap-2 px-1.5 sm:min-w-[8.25rem]">
             {selectedRegion === 'bangladesh' ? (
               <span aria-label="Bangladesh" role="img" className="relative h-4 w-6 shrink-0 overflow-hidden rounded-[3px] bg-[#006a4e] shadow-sm ring-1 ring-black/10">
@@ -212,6 +213,12 @@ export const Topbar: React.FC<TopbarProps> = ({
 
       {/* Right Controls */}
       <div className="ml-3 flex items-center gap-2 sm:gap-3.5">
+        <GlobalSearch
+          onQuickBooking={onQuickBooking}
+          onQuickCheckIn={onQuickCheckIn}
+          onQuickOrder={onQuickOrder}
+        />
+
         {/* Quick Actions Dropdown */}
         <div className="relative">
           <button
